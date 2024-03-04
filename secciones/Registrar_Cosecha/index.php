@@ -114,12 +114,7 @@ $lista_producto = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                         </ul>
                     </li>
 
-                    <li class="sidebar-item">
-                        <a href="<?php echo $url_base;?>secciones/Generar_reporte/" class="sidebar-link">
-                            <i class="bi bi-file-text"></i>
-                            Generar reporte
-                        </a>
-                    </li>
+                    
                 </li>
                         
                     
