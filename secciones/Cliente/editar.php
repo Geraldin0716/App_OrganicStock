@@ -23,7 +23,8 @@ if ($_POST) {
     $sentencia->bindParam(":id_datos_persona", $id_datos_persona);
     $sentencia->bindParam(":id_cliente", $txtID);
     $sentencia->execute();
-    header("Location:index.php");
+    $mensaje="Registro actualizado";
+    header("Location:index.php?mensaje=".$mensaje);
 }
 ?>
 
@@ -53,6 +54,7 @@ $url_base="http://localhost/app/";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="../../Css/Style.css">
     <title>ORGANIC STOCK</title>
 </head>
@@ -132,7 +134,14 @@ $url_base="http://localhost/app/";
                             <li class="sidebar-item">
                                 <a href="<?php echo $url_base;?>secciones/Empleado/"class="sidebar-link">Empleado</a>
                             </li>
-                        </ul>
+                            </ul>
+                            <li class="sidebar-item">
+                    <a href="<?php echo $url_base;?>login.php" class="sidebar-link">
+                    <i class="bi bi-toggle2-off"></i>
+                        Cerrar sesión
+                    </a>
+                </li>
+                        
                     </li>
 
                     
@@ -162,6 +171,13 @@ $url_base="http://localhost/app/";
 
                         
             </nav>
+            <?php if(isset($_GET['mensaje'])){?>
+    <script>
+        Swal.fire({icon:"sucess", title:"<?php echo $_GET['mensaje'];?>"});
+    </script>
+    <?php } ?>
+    <br/>
+
 <div class="container mt-5">
 <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8 py-8 ">
                             

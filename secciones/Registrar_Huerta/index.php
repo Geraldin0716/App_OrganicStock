@@ -7,12 +7,12 @@ $url_base="http://localhost/app/";
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous">
-<link rel="stylesheet" href="../../Css/Style.css">
     <title>ORGANIC STOCK</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../../Css/Style.css">
 </head>
 
 <?php include("../../base.php");
@@ -108,6 +108,12 @@ $lista_huerta = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                                 <a href="<?php echo $url_base;?>secciones/Empleado/"class="sidebar-link">Empleado</a>
                             </li>
                         </ul>
+                        <li class="sidebar-item">
+                    <a href="<?php echo $url_base;?>login.php" class="sidebar-link">
+                    <i class="bi bi-toggle2-off"></i>
+                        Cerrar sesión
+                    </a>
+                </li>
                     </li>
 
                     
@@ -143,8 +149,6 @@ $lista_huerta = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <br>
                                 <h2>HUERTA</h2>
-
-<table class="table table-dark table-striped">
 <a
         name=""
         id=""
@@ -153,6 +157,7 @@ $lista_huerta = $sentencia->fetchAll(PDO::FETCH_ASSOC);
         role="button"
         >Agregar huerta</a
        >
+       <table id="tabla_id" class="table table-dark table-striped">
          <thead>
          <tr>
         <th scope="col">ID</th>
@@ -162,6 +167,7 @@ $lista_huerta = $sentencia->fetchAll(PDO::FETCH_ASSOC);
         <th scope="col">DESCRIPCIÓN</th>
         <th scope="col">CANTIDAD</th>
         <th scope="col">FECHA</th>
+        <th scope="col"></th>
         
         </tr>
         </thead>
@@ -188,7 +194,7 @@ $lista_huerta = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                         >
                         <a
                             class="btn"
-                            href="index.php?txtID=<?php echo $registro["id_huerta"]; ?>"
+                            href="javascript:borrar(<?php echo $registro["id_huerta"]; ?>)"
                             role="button"
                             >Eliminar</a
                         >

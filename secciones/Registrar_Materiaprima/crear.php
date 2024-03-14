@@ -127,6 +127,12 @@ $url_base="http://localhost/app/";
                                 <a href="<?php echo $url_base;?>secciones/Empleado/"class="sidebar-link">Empleado</a>
                             </li>
                         </ul>
+                        <li class="sidebar-item">
+                    <a href="<?php echo $url_base;?>login.php" class="sidebar-link">
+                    <i class="bi bi-toggle2-off"></i>
+                        Cerrar sesión
+                    </a>
+                </li>
                     </li>
 
                    

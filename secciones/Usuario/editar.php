@@ -9,7 +9,7 @@ if (isset($_GET['txtID'])) {
     $registro = $sentencia->fetch(PDO::FETCH_LAZY);
     $usuario = $registro["usuario"];
     $correo = $registro["correo"];
-    $contraseña = $registro["contraseña"];
+    $password = $registro["password"];
 }
 
 if ($_POST) {
@@ -17,25 +17,25 @@ if ($_POST) {
     $txtID = isset($_POST['txtID']) ? $_POST['txtID'] : "";
     $usuario = isset($_POST["usuario"]) ? $_POST["usuario"] : "";
     $correo = isset($_POST["correo"]) ? $_POST["correo"] : "";
-    $contraseña = isset($_POST["contraseña"]) ? $_POST["contraseña"] : "";
+    $password = isset($_POST["password"]) ? $_POST["password"] : "";
 
     // Validar y limpiar datos POST
     $txtID = filter_var($txtID, FILTER_SANITIZE_STRING);
     $usuario = filter_var($usuario, FILTER_SANITIZE_STRING);
     $correo = filter_var($correo, FILTER_SANITIZE_EMAIL);
-    $contraseña = filter_var($contraseña, FILTER_SANITIZE_STRING);
+    $password = filter_var($password, FILTER_SANITIZE_STRING);
 
-    $hashedContraseña = password_hash($contraseña, PASSWORD_DEFAULT);
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
     // Intenta realizar la actualización con un bloque try-catch
     try {
         // Preparar la insercción de los datos
-        $sentencia = $conexion->prepare("UPDATE usuario SET usuario=:usuario, correo=:correo, contraseña=:contraseña WHERE id_usuario=:id_usuario");
+        $sentencia = $conexion->prepare("UPDATE usuario SET usuario=:usuario, correo=:correo, password=:password WHERE id_usuario=:id_usuario");
 
         // Asignando los valores que vienen del método POST
         $sentencia->bindParam(":usuario", $usuario);
         $sentencia->bindParam(":correo", $correo);
-        $sentencia->bindParam(":contraseña", $hashedContraseña);
+        $sentencia->bindParam(":password", $password);
         $sentencia->bindParam(":id_usuario", $txtID);
 
         // Ejecutar la actualización
@@ -164,6 +164,12 @@ $url_base="http://localhost/app/";
                                 <a href="<?php echo $url_base;?>secciones/Empleado/"class="sidebar-link">Empleado</a>
                             </li>
                         </ul>
+                        <li class="sidebar-item">
+                    <a href="<?php echo $url_base;?>login.php" class="sidebar-link">
+                    <i class="bi bi-toggle2-off"></i>
+                        Cerrar sesión
+                    </a>
+                </li>
                     </li>
 
                     
@@ -243,15 +249,15 @@ $url_base="http://localhost/app/";
                 />
 
                 <div class="mb-3">
-                <label for="contraseña" class="form-label">Contraseña</label>
+                <label for="password" class="form-label">Password</label>
                 <input
                     type="password"
-                    value="<?php echo $contraseña;?>"
+                    value="<?php echo $password;?>"
                     class="form-control"
-                    name="contraseña"
-                    id="contraseña"
+                    name="password"
+                    id="password"
                     aria-describedby="helpId"
-                    placeholder="Contraseña"
+                    placeholder="Password"
                 
                 />
                 <small id="helpId" class="form-text text-muted"></small>

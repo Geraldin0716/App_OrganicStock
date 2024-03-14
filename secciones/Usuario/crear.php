@@ -4,39 +4,31 @@ if ($_POST) {
     // Recolectamos los datos del método POST
     $usuario = (isset($_POST["usuario"])) ? $_POST["usuario"] : "";
     $correo = (isset($_POST["correo"])) ? $_POST["correo"] : "";
-    $contraseña = (isset($_POST["contraseña"])) ? $_POST["contraseña"] : "";
+    $password = (isset($_POST["password"])) ? $_POST["password"] : "";
 
-    // Verificamos que la contraseña no esté vacía
-    if ($contraseña !== "") {
-        // Hash de la contraseña
-        $hashedContraseña = password_hash($contraseña, PASSWORD_DEFAULT);
 
         // Preparar la inserción de los datos
-        $sentencia = $conexion->prepare("INSERT INTO usuario(id_usuario, usuario, correo, contraseña) 
-                    VALUES (null, :usuario, :correo, :contrasena)");
+        $sentencia = $conexion->prepare("INSERT INTO usuario(id_usuario, usuario, correo, password) 
+                    VALUES (null, :usuario, :correo, :password)");
 
         // Asignando los valores que vienen del método POST 
         $sentencia->bindParam(":usuario", $usuario);
         $sentencia->bindParam(":correo", $correo);
-        $sentencia->bindParam(":contrasena", $hashedContraseña); // Cambiado a :contrasena
+        $sentencia->bindParam(":password", $password); 
 
-        // Agrega esto para depurar
-        echo "Usuario: " . $usuario . "<br>";
-        echo "Correo: " . $correo . "<br>";
-        echo "Contraseña: " . $hashedContraseña . "<br>"; // Muestra la contraseña hasheada
 
         try {
             $sentencia->execute();
             echo "Inserción exitosa";
             header("Location:index.php");
-            exit(); // Asegura que el script se detenga después de redireccionar
+            exit();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
     } else {
-        echo "Error: La contraseña no puede estar vacía.";
+        echo "Error: La password no puede estar vacía.";
     }
-}
+
 
 ?>
 <?php 
@@ -132,6 +124,12 @@ $url_base="http://localhost/app/";
                                 <a href="<?php echo $url_base;?>secciones/Empleado/"class="sidebar-link">Empleado</a>
                             </li>
                         </ul>
+                        <li class="sidebar-item">
+                    <a href="<?php echo $url_base;?>login.php" class="sidebar-link">
+                    <i class="bi bi-toggle2-off"></i>
+                        Cerrar sesión
+                    </a>
+                </li>
                     </li>
 
                     
@@ -194,14 +192,14 @@ $url_base="http://localhost/app/";
                 />
 
                 <div class="mb-3">
-                <label for="contraseña" class="form-label">Contraseña</label>
+                <label for="password" class="form-label">Password</label>
                 <input
                     type="password"
                     class="form-control"
-                    name="contraseña"
-                    id="contraseña"
+                    name="password"
+                    id="password"
                     aria-describedby="helpId"
-                    placeholder="Contraseña"
+                    placeholder="Password"
                 />
 
                 />
