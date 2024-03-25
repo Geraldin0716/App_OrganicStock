@@ -1,43 +1,46 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    include("./base.php");
+// Incluir el archivo de conexión a la base de datos
+include("./base.php");
 
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validación de formulario
     $usuario = trim($_POST["usuario"]);
     $password = trim($_POST["password"]);
 
     if (empty($usuario) || empty($password)) {
-        $mensaje = "Error: El usuario y la password son requeridos.";
+        echo json_encode(["success" => false, "error" => "El usuario y la contraseña son requeridos."]);
+        exit();
     } else {
         try {
+            // Consulta SQL para obtener el usuario de la base de datos
             $sentencia = $conexion->prepare("SELECT * FROM `usuario` WHERE usuario=:usuario");
             $sentencia->bindParam(":usuario", $usuario);
             $sentencia->execute();
 
+            // Obtener el registro de usuario
             $registro = $sentencia->fetch(PDO::FETCH_ASSOC);
 
             if ($registro && password_verify($password, $registro["password"])) {
                 // Inicio de sesión exitoso
                 $_SESSION['usuario'] = $registro["usuario"];
                 $_SESSION['logueado'] = true;
-
-                // Redirige al usuario al index.php
-                header("Location: index.php");
+                echo json_encode(["success" => true]);
                 exit();
             } else {
-                // Usuario o password incorrectos
-                $mensaje = "Error: El usuario o la password son incorrectos.";
+                // Usuario o contraseña incorrectos
+                echo json_encode(["success" => false, "error" => "El usuario o la contraseña son incorrectos."]);
+                exit();
             }
         } catch (PDOException $e) {
             // Manejo de errores de la base de datos
-            $mensaje = "Error en la consulta: " . $e->getMessage();
+            echo json_encode(["success" => false, "error" => "Error en la consulta: " . $e->getMessage()]);
+            exit();
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,29 +61,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
                         <div class="col-md-6 col-lg-7 d-flex align-items-center">
                             <div class="card-body p-4 p-lg-5 text-black">
-                                <form method="post" action="">
-                                    <div class="d-flex align-items-center mb-3 pb-1">
-                                        <i class="fas fa-cubes fa-2x me-3" style="color: #fff;"></i>
-                                        <h1>ORGANIC STOCK</h1>
-                                    </div>
-                                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Inicia sesión en tu cuenta</h5>
-                                    <div class="alert alert-danger" role="alert">
-                                        <?php if (isset($mensaje)) { ?>
-                                            <strong><?php echo htmlspecialchars($mensaje); ?></strong>
-                                        <?php } ?>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="usuario">Usuario:</label>
-                                        <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingresa tu usuario">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password">Password:</label>
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu password">
-                                    </div>
-                                    <div class="pt-1 mb-4">
-                                        <button class="btn btn-dark btn-lg btn-block" type="submit">Ingresar</button>
-                                    </div>
-                                </form>
+                                <div class="d-flex align-items-center mb-3 pb-1">
+                                    <i class="fas fa-cubes fa-2x me-3" style="color: #fff;"></i>
+                                    <h1>ORGANIC STOCK</h1>
+                                </div>
+                                <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Inicia sesión en tu cuenta</h5>
+                                <div class="alert alert-danger" role="alert" style="display: none;"></div>
+                                <div class="form-group">
+                                    <label for="usuario">Usuario:</label>
+                                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingresa tu usuario">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password:</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu password">
+                                </div>
+                                <div class="pt-1 mb-4">
+                                    <button class="btn btn-dark btn-lg btn-block" id="loginBtn">Ingresar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -89,5 +86,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#loginBtn').click(function(e) {
+            e.preventDefault();
+            var usuario = $('#usuario').val();
+            var password = $('#password').val();
+
+            $.ajax({
+                type: "POST",
+                url: "login.php", // Ruta correcta al archivo del login
+                data: {
+                    usuario: usuario,
+                    password: password
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        // Si el inicio de sesión es exitoso, redirecciona al usuario a otra página
+                        window.location.href = "index.php";
+                    } else {
+                        // Si hay un error, muestra el mensaje de error
+                        $('.alert-danger').text(response.error).show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    $('.alert-danger').text('Error interno del servidor. Por favor, inténtelo de nuevo más tarde.').show();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
